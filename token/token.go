@@ -1,40 +1,37 @@
 package token
 
-// TokenType  is defined as string that allows us to create mandy different values
+// TokenType definition
 type TokenType string
 
-// Token definition
+// Token struct definition
 type Token struct {
 	Type    TokenType
 	Literal string
 }
 
-// WE need to define the token defintion list, this is key for every language
-// Here is examples how the golang team is doing that definition
-// https://github.com/golang/go/blob/master/src/go/token/token.go
-// For now we're going to scape some language feature like comments and numbers of line
+// Token list definition
 const (
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	// Identifiers and Literals
-	IDENT = "IDENT" // add(), server(), add , etc...
+	// Identifers and literals
+	IDENT = "IDENT"
 	INT   = "INT"
 
 	// Operators
 	ASSIGN = "="
 	PLUS   = "+"
 
-	// Delimeters
-	COMMA     = ","
-	SEMICOLON = ";"
+	// Operatos + Literals
+	COMMA     = "COMMA"
+	SEMICOLON = "SEMICOLON"
 
 	LPAREN = "("
 	RPAREN = ")"
 	LBRACE = "{"
 	RBRACE = "}"
 
-	// keywords
+	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
 )
