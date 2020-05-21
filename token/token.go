@@ -19,8 +19,14 @@ const (
 	INT   = "INT"   // 1234,4343,454
 
 	// Operators
-	ASSIGN = "ASSIGN"
-	PLUS   = "PLUS"
+	ASSIGN   = "ASSIGN"
+	PLUS     = "PLUS"
+	MINUS    = "-"
+	BANG     = "!"
+	ASTERISK = "*"
+	SLASH    = "/"
+	LT       = "<"
+	GT       = ">"
 
 	// Delimeters
 	COMMA     = ","
@@ -33,12 +39,22 @@ const (
 	//Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
+	TRUE     = "TRUE"
+	FALSE    = "FALSE"
+	IF       = "IF"
+	ELSE     = "ELSE"
+	RETURN   = "RETURN"
 )
 
 // keywords properties just got all tne keyword in one slice
 var keywords = map[string]TokenType{
-	"fn":  FUNCTION,
-	"let": LET,
+	"fn":     FUNCTION,
+	"let":    LET,
+	"true":   TRUE,
+	"false":  FALSE,
+	"if":     IF,
+	"else":   ELSE,
+	"return": RETURN,
 }
 
 // LookupIdent is going to return the right tokentype of the keywords
