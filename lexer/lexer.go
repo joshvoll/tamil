@@ -1,15 +1,13 @@
 package lexer
 
-import (
-	"github.com/joshvoll/tamil/token"
-)
+import "github.com/joshvoll/tamil/token"
 
 // Lexer struct defintiion
 type Lexer struct {
 	input        string
-	position     int  // the current position of the character
-	readPosition int  // current reading position in input (after current character)
-	ch           byte // current character under examination
+	position     int  // the postion of the character
+	readPosition int  // the position of the current character that is reading
+	ch           byte // the character byte
 }
 
 // New Constructor of the lexer
@@ -37,7 +35,11 @@ func (l *Lexer) readChar() {
 	l.readPosition++
 }
 
-// NextToken going to assign the nexto token to the input
+// NextToken is going to get the next token from each sentence
+// We look at the current character under examination (l.ch)
+// and return a token depending on which character it is
+// What our lexer needs to do is recognize
+// whether the current character is a letter and if so
 func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 	l.skipWhiteSpace()
@@ -70,25 +72,33 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Type = token.INT
 			tok.Literal = l.readNumber()
 			return tok
-		} else {
-			tok = newToken(token.ILLEGAL, l.ch)
 		}
+		tok = newToken(token.ILLEGAL, l.ch)
 	}
 	l.readChar()
 	return tok
 }
 
-// readIdentifier check is the identifier is a type
+// newToken is a helper function that return the right token
+func newToken(tokenType token.TokenType, ch byte) token.Token {
+	return token.Token{
+		Type:    tokenType,
+		Literal: string(ch),
+	}
+}
+
+// readIdentifier helper
+// it needs to read the rest of the identifier/keyword until it encounters a non-letter-character
+// Having read that identifier/keyword, we then need to find out if it is a identifier or a keyword
 func (l *Lexer) readIdentifier() string {
 	position := l.position
 	for isLetter(l.ch) {
 		l.readChar()
 	}
 	return l.input[position:l.position]
-
 }
 
-// readNumber check if there is a number on the token
+// readNumber just read the number until it finished
 func (l *Lexer) readNumber() string {
 	position := l.position
 	for isDigit(l.ch) {
@@ -97,24 +107,19 @@ func (l *Lexer) readNumber() string {
 	return l.input[position:l.position]
 }
 
-// skipWhiteSpace clean the white space between character
+// skipWhiteSpace is just clean the whiteSpace for us
 func (l *Lexer) skipWhiteSpace() {
 	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
+// isDigit check if the byte is digit
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
+
+// isLetter check if the token is letter or not
 func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
-}
-
-// newToken get the token type and character byte and return the type
-func newToken(tokenType token.TokenType, ch byte) token.Token {
-	return token.Token{
-		Type:    tokenType,
-		Literal: string(ch),
-	}
 }
