@@ -1,67 +1,37 @@
 package token
 
-// TokenType is for have multiple type of values
+// TokenType is for define lot of token types
 type TokenType string
 
-// Token model definition
+// Token definition
 type Token struct {
 	Type    TokenType
-	Literal string
+	Literla string
 }
 
-// tokens definitions
+// Tokens definitions
 const (
+	// Genral operation
 	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
 
-	// Identifiers and literals
-	IDENT = "IDENT" // add, foo,
-	INT   = "INT"   // 1234,4343,454
+	// Ident and Literals
+	IDENT = "IDENT"
+	INT   = "INT"
 
 	// Operators
-	ASSIGN   = "ASSIGN"
-	PLUS     = "PLUS"
-	MINUS    = "-"
-	BANG     = "!"
-	ASTERISK = "*"
-	SLASH    = "/"
-	LT       = "<"
-	GT       = ">"
+	ASSIGN = "ASSIGN"
+	PLUS   = "+"
 
 	// Delimeters
-	COMMA     = ","
-	SEMICOLON = ";"
 	LPAREN    = "("
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
+	COMMA     = ","
+	SEMICOLON = ";"
 
-	//Keywords
+	// Keywords
 	FUNCTION = "FUNCTION"
 	LET      = "LET"
-	TRUE     = "TRUE"
-	FALSE    = "FALSE"
-	IF       = "IF"
-	ELSE     = "ELSE"
-	RETURN   = "RETURN"
 )
-
-// keywords properties just got all tne keyword in one slice
-var keywords = map[string]TokenType{
-	"fn":     FUNCTION,
-	"let":    LET,
-	"true":   TRUE,
-	"false":  FALSE,
-	"if":     IF,
-	"else":   ELSE,
-	"return": RETURN,
-}
-
-// LookupIdent is going to return the right tokentype of the keywords
-// checks the keywords table to see whether the given identifier is in fact a keyword
-func LookupIdent(ident string) TokenType {
-	if tok, ok := keywords[ident]; ok {
-		return tok
-	}
-	return IDENT
-}
