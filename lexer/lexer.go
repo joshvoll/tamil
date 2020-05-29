@@ -1,18 +1,16 @@
 package lexer
 
-import (
-	"github.com/joshvoll/tamil/token"
-)
+import "github.com/joshvoll/tamil/token"
 
 // Lexer definition
 type Lexer struct {
 	input        string
-	position     int  // the read position of the character from the input
-	readPosition int  // the currently read position of the character (after the current character)
-	ch           byte // the character byte representation in number
+	position     int  // the position on the character
+	readPosition int  // the current position of the character that is being read it
+	ch           byte // character reprensentation
 }
 
-// New constructur method
+// New contructor method
 func New(input string) *Lexer {
 	l := &Lexer{
 		input: input,
@@ -46,6 +44,10 @@ func (l *Lexer) NextToken() token.Token {
 	var tok token.Token
 	l.skipWhiteSpace()
 	switch l.ch {
+	case '+':
+		tok = newToken(token.PLUS, l.ch)
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
 	case '=':
 		if l.peekChar() == '=' {
 			ch := l.ch
@@ -55,10 +57,6 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.ASSIGN, l.ch)
 		}
-	case '+':
-		tok = newToken(token.PLUS, l.ch)
-	case '-':
-		tok = newToken(token.MINUS, l.ch)
 	case '!':
 		if l.peekChar() == '=' {
 			ch := l.ch
@@ -72,10 +70,6 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.ASTERISK, l.ch)
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
-	case '<':
-		tok = newToken(token.LT, l.ch)
-	case '>':
-		tok = newToken(token.GT, l.ch)
 	case '(':
 		tok = newToken(token.LPAREN, l.ch)
 	case ')':
@@ -84,10 +78,14 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
-	case ';':
-		tok = newToken(token.SEMICOLON, l.ch)
 	case ',':
 		tok = newToken(token.COMMA, l.ch)
+	case ';':
+		tok = newToken(token.SEMICOLON, l.ch)
+	case '>':
+		tok = newToken(token.GT, l.ch)
+	case '<':
+		tok = newToken(token.LT, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -97,12 +95,11 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Type = token.LookupIdent(tok.Literal)
 			return tok
 		} else if isDigit(l.ch) {
-			tok.Type = token.INT
 			tok.Literal = l.readNumber()
+			tok.Type = token.INT
 			return tok
-		} else {
-			tok = newToken(token.ILLEGAL, l.ch)
 		}
+		tok = newToken(token.ILLEGAL, l.ch)
 	}
 	l.readChar()
 	return tok
@@ -117,6 +114,15 @@ func (l *Lexer) readIdentifier() string {
 		l.readChar()
 	}
 	return l.input[position:l.position]
+
+}
+
+// peekChar is going to pick a character base on the input: utility for != or == to character token
+func (l *Lexer) peekChar() byte {
+	if l.readPosition >= len(l.input) {
+		return 0
+	}
+	return l.input[l.readPosition]
 }
 
 // readNumber helper method is going to return a number
@@ -130,21 +136,12 @@ func (l *Lexer) readNumber() string {
 
 // skipWhiteSpace remove the white space from the code
 func (l *Lexer) skipWhiteSpace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
+	for l.ch == ' ' || l.ch == '\n' || l.ch == '\t' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
-// peekChar helper method
-func (l *Lexer) peekChar() byte {
-	if l.readPosition >= len(l.input) {
-		return 0
-	}
-	return l.input[l.readPosition]
-
-}
-
-// newToken return the token from the token file
+// newToken return the TokenType of the character
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{
 		Type:    tokenType,
@@ -152,12 +149,12 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	}
 }
 
-// isLetter helper method
+// isDigit check if the character byte is a letter
 func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '-'
 }
 
-// isDigit helper method
+// isDigit check if the input character is number
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
