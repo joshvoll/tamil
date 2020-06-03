@@ -2,15 +2,15 @@ package lexer
 
 import "github.com/joshvoll/tamil/token"
 
-// Lexer definition
+// Lexer definitin
 type Lexer struct {
-	input        string
-	position     int  // the position on the character
-	readPosition int  // the current position of the character that is being read it
-	ch           byte // character reprensentation
+	input        string // the input of the code
+	position     int    // the position of the character
+	readPosition int    // is the current position of the character being read it
+	ch           byte   // character position
 }
 
-// New contructor method
+// New constructor function of the lexer
 func New(input string) *Lexer {
 	l := &Lexer{
 		input: input,
@@ -70,6 +70,10 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.ASTERISK, l.ch)
 	case '/':
 		tok = newToken(token.SLASH, l.ch)
+	case ';':
+		tok = newToken(token.SEMICOLON, l.ch)
+	case ',':
+		tok = newToken(token.COMMA, l.ch)
 	case '(':
 		tok = newToken(token.LPAREN, l.ch)
 	case ')':
@@ -78,14 +82,10 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
-	case ',':
-		tok = newToken(token.COMMA, l.ch)
-	case ';':
-		tok = newToken(token.SEMICOLON, l.ch)
-	case '>':
-		tok = newToken(token.GT, l.ch)
 	case '<':
 		tok = newToken(token.LT, l.ch)
+	case '>':
+		tok = newToken(token.GT, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -98,8 +98,9 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Literal = l.readNumber()
 			tok.Type = token.INT
 			return tok
+		} else {
+			tok = newToken(token.ILLEGAL, l.ch)
 		}
-		tok = newToken(token.ILLEGAL, l.ch)
 	}
 	l.readChar()
 	return tok
@@ -114,10 +115,10 @@ func (l *Lexer) readIdentifier() string {
 		l.readChar()
 	}
 	return l.input[position:l.position]
-
 }
 
-// peekChar is going to pick a character base on the input: utility for != or == to character token
+// peekChar is going to pick a character from the input but without incrementing the read
+// We only want to “peek” ahead in the input and not move around in it
 func (l *Lexer) peekChar() byte {
 	if l.readPosition >= len(l.input) {
 		return 0
@@ -125,7 +126,8 @@ func (l *Lexer) peekChar() byte {
 	return l.input[l.readPosition]
 }
 
-// readNumber helper method is going to return a number
+// readNumber helper function
+// need to read and return if the character is number
 func (l *Lexer) readNumber() string {
 	position := l.position
 	for isDigit(l.ch) {
@@ -134,14 +136,13 @@ func (l *Lexer) readNumber() string {
 	return l.input[position:l.position]
 }
 
-// skipWhiteSpace remove the white space from the code
+// skipWhiteSpace is going to clean all the white space for us
 func (l *Lexer) skipWhiteSpace() {
 	for l.ch == ' ' || l.ch == '\n' || l.ch == '\t' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
-// newToken return the TokenType of the character
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{
 		Type:    tokenType,
@@ -149,12 +150,12 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	}
 }
 
-// isDigit check if the character byte is a letter
+// isLetter helper function
 func isLetter(ch byte) bool {
-	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '-'
+	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
-// isDigit check if the input character is number
+// isDigit helper function
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
