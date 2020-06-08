@@ -2,15 +2,16 @@ package lexer
 
 import "github.com/joshvoll/tamil/token"
 
-// Lexer definitin
+// Lexer definition
 type Lexer struct {
 	input        string // the input of the code
 	position     int    // the position of the character
-	readPosition int    // is the current position of the character being read it
-	ch           byte   // character position
+	readPosition int    // the current read position of the character
+	ch           byte   // the byte of the character
+
 }
 
-// New constructor function of the lexer
+// New constructor function of the Lexer
 func New(input string) *Lexer {
 	l := &Lexer{
 		input: input,
@@ -66,14 +67,6 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
-	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
-	case '/':
-		tok = newToken(token.SLASH, l.ch)
-	case ';':
-		tok = newToken(token.SEMICOLON, l.ch)
-	case ',':
-		tok = newToken(token.COMMA, l.ch)
 	case '(':
 		tok = newToken(token.LPAREN, l.ch)
 	case ')':
@@ -82,6 +75,14 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case ',':
+		tok = newToken(token.COMMA, l.ch)
+	case ';':
+		tok = newToken(token.SEMICOLON, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
 	case '<':
 		tok = newToken(token.LT, l.ch)
 	case '>':
@@ -101,6 +102,7 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
+
 	}
 	l.readChar()
 	return tok
@@ -136,13 +138,14 @@ func (l *Lexer) readNumber() string {
 	return l.input[position:l.position]
 }
 
-// skipWhiteSpace is going to clean all the white space for us
+// skipWhiteSpace() remove the white space from the reading char
 func (l *Lexer) skipWhiteSpace() {
-	for l.ch == ' ' || l.ch == '\n' || l.ch == '\t' || l.ch == '\r' {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
 
+// newToken return the token Type
 func newToken(tokenType token.TokenType, ch byte) token.Token {
 	return token.Token{
 		Type:    tokenType,
@@ -150,12 +153,12 @@ func newToken(tokenType token.TokenType, ch byte) token.Token {
 	}
 }
 
-// isLetter helper function
+// isLetter helper function return boolean
 func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }
 
-// isDigit helper function
+// isDigit helper boolean return if the character is number
 func isDigit(ch byte) bool {
 	return '0' <= ch && ch <= '9'
 }
