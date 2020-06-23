@@ -1,27 +1,27 @@
 package token
 
-// TokenType definition
+// TokenType defenition
 type TokenType string
 
-// Token model definition
+// Token definition
 type Token struct {
 	Type    TokenType
 	Literal string
 }
 
-// token lists
+// Tokens Lists
 const (
-	ILLEGAL = "ILLEGAL"
 	EOF     = "EOF"
+	ILLEGAL = "ILLEGAL"
 
 	// Ident and Literals
-	IDENT = "IDENT"
 	INT   = "INT"
+	IDENT = "IDENT"
 
 	// Operators
 	PLUS     = "+"
 	MINUS    = "-"
-	ASSIGN   = "="
+	ASSGIN   = "="
 	BANG     = "!"
 	ASTERISK = "*"
 	SLASH    = "/"
@@ -29,12 +29,12 @@ const (
 	NOT_EQ   = "!="
 
 	// Delimeters
-	COMMA     = ","
-	SEMICOLON = ";"
 	LPAREN    = "("
 	RPAREN    = ")"
 	LBRACE    = "{"
 	RBRACE    = "}"
+	COMMA     = ","
+	SEMICOLON = ";"
 	LT        = "<"
 	GT        = ">"
 
@@ -48,7 +48,7 @@ const (
 	RETURN   = "RETURN"
 )
 
-// keywords mapping
+// map of tokens
 var keywords = map[string]TokenType{
 	"fn":     FUNCTION,
 	"let":    LET,
@@ -59,7 +59,7 @@ var keywords = map[string]TokenType{
 	"return": RETURN,
 }
 
-// LookupIdent is going to return the token type base on the token send it
+// LookupIdent method to return the token types
 func LookupIdent(ident string) TokenType {
 	if tok, ok := keywords[ident]; ok {
 		return tok
