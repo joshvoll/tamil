@@ -6,10 +6,32 @@ import (
 	"github.com/joshvoll/tamil/token"
 )
 
+func TestUniqueToken(t *testing.T) {
+	input := `let fn`
+	testt := []struct {
+		expectedType    token.TokenType
+		expectedLiteral string
+	}{
+		{token.LET, "let"},
+		{token.FUNCTION, "fn"},
+	}
+	l := New(input)
+	for i, tt := range testt {
+		tok := l.NextToken()
+		if tok.Type != tt.expectedType {
+			t.Fatalf("test[%d] - tokentype wrong. expected=%q, got=%q", i, tt.expectedType, tok.Type)
+		}
+		if tok.Literal != tt.expectedLiteral {
+			t.Fatalf("test[%d] - tokenLiteral wrong. expected=%q, got=%q", i, tt.expectedLiteral, tok.Literal)
+		}
+	}
+
+}
+
 func TestNextToken(t *testing.T) {
 	input := `let five = 5;
 let ten = 10;
-let add = fn(x, y) {
+let add = function(x, y) {
      x + y;
 };
 let result = add(five, ten); 
