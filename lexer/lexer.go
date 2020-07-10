@@ -1,16 +1,18 @@
 package lexer
 
-import "github.com/joshvoll/tamil/token"
+import (
+	"github.com/joshvoll/tamil/token"
+)
 
 // Lexer definition
 type Lexer struct {
 	input        string
-	position     int  // current position in input (points to current chararacter)
-	readPosition int  // current reading position in input (after current chararacter)
+	position     int  // current position in input (points to current char)
+	readPosition int  // current reading position in input (after current char)
 	ch           byte // current char under examination
 }
 
-// New contructor function
+// New contructor funciton
 func New(input string) *Lexer {
 	l := &Lexer{
 		input: input,
@@ -62,18 +64,6 @@ func (l *Lexer) NextToken() token.Token {
 		} else {
 			tok = newToken(token.BANG, l.ch)
 		}
-	case '+':
-		tok = newToken(token.PLUS, l.ch)
-	case '-':
-		tok = newToken(token.MINUS, l.ch)
-	case ';':
-		tok = newToken(token.SEMICOLON, l.ch)
-	case ',':
-		tok = newToken(token.COMMA, l.ch)
-	case '/':
-		tok = newToken(token.SLASH, l.ch)
-	case '*':
-		tok = newToken(token.ASTERISK, l.ch)
 	case '(':
 		tok = newToken(token.LPAREN, l.ch)
 	case ')':
@@ -82,11 +72,22 @@ func (l *Lexer) NextToken() token.Token {
 		tok = newToken(token.LBRACE, l.ch)
 	case '}':
 		tok = newToken(token.RBRACE, l.ch)
-	case '<':
-		tok = newToken(token.LT, l.ch)
+	case '*':
+		tok = newToken(token.ASTERISK, l.ch)
+	case '/':
+		tok = newToken(token.SLASH, l.ch)
+	case ',':
+		tok = newToken(token.COMMA, l.ch)
+	case ';':
+		tok = newToken(token.SEMICOLON, l.ch)
+	case '+':
+		tok = newToken(token.PLUS, l.ch)
+	case '-':
+		tok = newToken(token.MINUS, l.ch)
 	case '>':
 		tok = newToken(token.GT, l.ch)
-
+	case '<':
+		tok = newToken(token.LT, l.ch)
 	case 0:
 		tok.Literal = ""
 		tok.Type = token.EOF
@@ -96,22 +97,20 @@ func (l *Lexer) NextToken() token.Token {
 			tok.Type = token.LookupIdent(tok.Literal)
 			return tok
 		} else if isDigit(l.ch) {
-			tok.Literal = l.readNumber()
 			tok.Type = token.INT
+			tok.Literal = l.readNumber()
 			return tok
-
 		} else {
 			tok = newToken(token.ILLEGAL, l.ch)
 		}
-
 	}
 	l.readChar()
 	return tok
 }
 
-// skipWhiteSpace() just clean all the white space
+// skipWhiteSpace just remove white space bt tokens
 func (l *Lexer) skipWhiteSpace() {
-	for l.ch == ' ' || l.ch == '\t' || l.ch == '\r' || l.ch == '\n' {
+	for l.ch == ' ' || l.ch == '\t' || l.ch == '\n' || l.ch == '\r' {
 		l.readChar()
 	}
 }
@@ -119,6 +118,7 @@ func (l *Lexer) skipWhiteSpace() {
 // readIdentifier helper
 // it needs to read the rest of the identifier/keyword until it encounters a non-letter-character
 // Having read that identifier/keyword, we then need to find out if it is a identifier or a keyword
+// readNumber helper
 func (l *Lexer) readIdentifier() string {
 	position := l.position
 	for isLetter(l.ch) {
@@ -127,7 +127,7 @@ func (l *Lexer) readIdentifier() string {
 	return l.input[position:l.position]
 }
 
-// readNumber helper
+// readNumber helper function
 func (l *Lexer) readNumber() string {
 	position := l.position
 	for isDigit(l.ch) {
@@ -145,7 +145,7 @@ func (l *Lexer) peekChar() byte {
 	return l.input[l.readPosition]
 }
 
-// isDigit return a boolean if the character is letter
+// isLetter return a boolean if the character is letter
 func isLetter(ch byte) bool {
 	return 'a' <= ch && ch <= 'z' || 'A' <= ch && ch <= 'Z' || ch == '_'
 }

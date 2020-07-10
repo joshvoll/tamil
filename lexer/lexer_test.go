@@ -31,7 +31,7 @@ func TestUniqueToken(t *testing.T) {
 func TestNextToken(t *testing.T) {
 	input := `let five = 5;
 let ten = 10;
-let add = function(x, y) {
+let add = fn(x, y) {
      x + y;
 };
 let result = add(five, ten); 
