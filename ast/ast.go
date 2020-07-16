@@ -2,21 +2,21 @@ package ast
 
 import "github.com/joshvoll/tamil/token"
 
-// Node representation
+// Node hold the logic of the ast
 type Node interface {
 	TokenLiteral() string
 }
 
-// Statement representation
-type Statement interface {
-	Node
-	statementNode()
-}
-
-// Expression representation
+// Expression define the expression method
 type Expression interface {
 	Node
 	expressionNode()
+}
+
+// Statement define the statements method
+type Statement interface {
+	Node
+	statementNode()
 }
 
 // Program definition
@@ -24,7 +24,7 @@ type Program struct {
 	Statements []Statement
 }
 
-// TokenLiteral implements Node
+// TokenLiteral implements Node interface
 func (p *Program) TokenLiteral() string {
 	if len(p.Statements) > 0 {
 		return p.Statements[0].TokenLiteral()
@@ -32,18 +32,20 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
-// LetStatement represent the LET statment variable binding
-type LetStatement struct {
+// letStatement definition
+type letStatement struct {
 	Token token.Token
 	Name  *Identifier
 	Value Expression
 }
 
-// statementNode helper method
-func (ls *LetStatement) statementNode() {}
+// statementNode() implementation fro letStatement
+func (ls *letStatement) statementNode() {}
 
-// TokenLiteral helper method
-func (ls *LetStatement) TokenLiteral() string { return ls.Token.Literal }
+// TokenLiteral implementation for letStatement
+func (ls *letStatement) TokenLiteral() string {
+	return ls.Token.Literal
+}
 
 // Identifier definition
 type Identifier struct {
@@ -51,8 +53,10 @@ type Identifier struct {
 	Value string
 }
 
-// expresionNode implements Expression
+// statementNode() implements for Identifier
 func (i *Identifier) expressionNode() {}
 
-// TokenLiteral implements Node
-func (i *Identifier) TokenLiteral() string { return i.Token.Literal }
+// TokenLiteral implements for Identifier
+func (i *Identifier) TokenLiteral() string {
+	return i.Token.Literal
+}
