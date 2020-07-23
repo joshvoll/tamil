@@ -32,18 +32,18 @@ func (p *Program) TokenLiteral() string {
 	return ""
 }
 
-// letStatement definition
-type letStatement struct {
+// LetStatement definition
+type LetStatement struct {
 	Token token.Token
 	Name  *Identifier
 	Value Expression
 }
 
 // statementNode() implementation fro letStatement
-func (ls *letStatement) statementNode() {}
+func (ls *LetStatement) statementNode() {}
 
 // TokenLiteral implementation for letStatement
-func (ls *letStatement) TokenLiteral() string {
+func (ls *LetStatement) TokenLiteral() string {
 	return ls.Token.Literal
 }
 
